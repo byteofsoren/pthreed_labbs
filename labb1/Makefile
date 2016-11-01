@@ -6,13 +6,13 @@ CROSS_TOLL=
 CC=$(CROSS_TOLL) gcc
 TTY=/dev/pts/2
 ## Target is the source files with out .c or .cpp  tex main.c ~> main
-TARGET=Array SortingAlgorithms Statistics  main
+TARGET=myRand main
 OBJECTS=$(TARGET:=.o)
 ## EXECFILE is the name on the exe file you want
 EXECFILE=prog
 ## LFLAGS is the libary linker flags like -lncurses or -lpthread.
-#LFLAGS=-lpthread
-LFLAGS=-lncurses -lm
+LFLAGS=-lpthread
+#LFLAGS=-lncurses -lm
 ## CFLAGS tells the copmiler to compile with diffrent flaggs mostly -g -Wall
 CFLAGS=-g
 ## If files is from windows then run
@@ -30,7 +30,6 @@ all: clean $(TARGET)
 
 run: clean all
 	./$(EXECFILE)
-	cat result.txt
 
 debug: clean all
 	cgdb ./$(EXECFILE)
