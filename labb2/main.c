@@ -3,10 +3,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-struct matrix{
-  char **array;
-  int size;
-};
 
 // This time i whill add wait for thread to close program.
 void *threadFun(void *arg) {
@@ -32,12 +28,6 @@ void *det(void *matrix) {
   return NULL;
 }
 
-void calcDet() {
-  // Calculate determinant.
-  // ElementType* array = malloc(sizeof(ElementType)*size);
-  struct matrix* A = malloc(sizeof(matirx));
-  A->size = 2;
-}
 
 int main(int argc, char const *argv[]) {
   pthread_t trd, trdCalc;
