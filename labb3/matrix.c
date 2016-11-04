@@ -1,4 +1,5 @@
 #include "matrix.h"
+#include "myRand.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -20,6 +21,17 @@ Matrix mx_Idetity(size_t m){
   mx = mx_zerros(m, m);
   for (size_t i = 0; i < m; i++) {
     mx_sett(mx, 1, i, i);
+  }
+  return mx;
+}
+
+Matrix mx_Rand(size_t m, size_t n, int min, int max){
+  Matrix mx = NULL;
+  mx = mx_zerros(m,n);
+  for (size_t row = 0; row < m; row++) {
+    for (size_t col = 0; col < n; col++) {
+      mx_sett(mx, myRand(min, max), row, col);
+    }
   }
   return mx;
 }
