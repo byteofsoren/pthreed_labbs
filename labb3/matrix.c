@@ -36,13 +36,17 @@ Matrix mx_Rand(size_t m, size_t n, int min, int max){
   return mx;
 }
 
+size_t _index(Matrix mx, size_t m, size_t n){
+  // Calculates and returns the indexing of the array
+  size_t cols = mx->n;
+  return cols * m + n;
+}
+
 void mx_sett(Matrix mx, int data, size_t m, size_t n){
   // Sett a specific cell in the matrix to the choisen data.
   if (mx->m >= m && mx->n >= n) {
-    //printf("Setting data\n" );
-    size_t cols = mx->n;
-    size_t index = cols * m + n;
-    mx->data[index] = data;
+
+    mx->data[_index(mx,  m,  n)] = data;
   }
   else {
     printf("--Error out side index--" );
@@ -66,4 +70,84 @@ void mx_show(Matrix mx){
     }
   }
 
+}
+
+int mx_getCell(Matrix mx, size_t m, size_t n){
+  // returns the data form a cell in the matrix.
+  if (m < mx->m && n < mx->n) {
+    return mx->data[_index(mx, m, n)];
+  }
+  else {
+    printf("Error outside matrix\n" );
+  }
+  return 0;
+}
+
+Matrix mx_SubMx(Matrix mx, size_t mStart, size_t mStop, size_t nStart, size_t nStop){
+  size_t mNew = mStop - mStart;
+  size_t nNew = nStop - mStart;
+  Matrix mxNew = mx_zerros(mNew,nNew);  // Creates a new matrix to store data in.
+  size_t mCounter = 0;
+  size_t nCounter = 0;
+  for (size_t i = mStart; i < mStop; i++) {
+    for (size_t j = nStart; j < nStop; j++) {
+      mx_sett(mxNew, mx_getCell(mx, i, j), mCounter, nCounter);
+      nCounter++;
+    }
+    nCounter = 0;
+    mCounter++;
+  }
+  return mxNew;
+}
+
+int mx_det(Matrix mx){
+  // Calculates the determinant of an matrix.
+  int sum = 0;
+  if (mx->m == mx->n) {
+    // Make shure that the matrix is asquare matrix.
+    switch (mx->n) {
+      case 1:
+        return mx->data[0];
+        break;
+      case 2:
+        return mx->data[0]*mx->data[3] - mx->data[1]*mx->data[2];
+        break;
+      default:
+        // This leads to cofactor evaluation.
+        printf("test\n" );
+        // iterate over top row.
+        for (size_t top_row_cout = 0; top_row_cout < mx->n; top_row_cout++) {
+          // create a sub matrix for eveary top row cell.
+          Matrix mxNew = mx_zerros(mx->m - 1, mx->m -1);
+          // fill new matrix with sub matrix excluding the colum pointed ou by top_row_cout
+          size_t newCol = 0;
+          size_t newRow = 0;
+          for (size_t row = 1; row < mx->m; row++) {
+            for (size_t col = 0; col < mx->n; col++) {
+              if (top_row_cout != col) {
+                mx_sett(mxNew,mx_getCell( mx, row , col ), newRow, newCol );
+                newCol++;
+              }
+
+            }
+            newRow++;
+          }
+          mx_show(mxNew);
+          mx_free(mxNew);
+        }
+
+    }
+
+  }
+  else {
+    printf("Not a square matrix\n" );
+  }
+  return sum;
+}
+
+void mx_free(Matrix mx){
+  mx->data = NULL;
+  mx->m = 0;
+  mx->n = 0;
+  free(mx);
 }
