@@ -2,6 +2,8 @@
 #include "myRand.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+
 
 Matrix mx_zerros(size_t m, size_t n){
   // Creates a matrix with 0 m rows n cols.
@@ -33,6 +35,15 @@ Matrix mx_Rand(size_t m, size_t n, int min, int max){
       mx_sett(mx, myRand(min, max), row, col);
     }
   }
+  return mx;
+}
+
+Matrix mx_countUp(size_t m, size_t n){
+  Matrix mx = mx_zerros(m, n);
+  for (size_t i = 0; i < m*n; i++) {
+    mx->data[i] = i + 1;
+  }
+  mx->data[1]=9;
   return mx;
 }
 
@@ -69,7 +80,7 @@ void mx_show(Matrix mx){
       printf("|\n| " );
     }
   }
-
+  printf("\n" );
 }
 
 int mx_getCell(Matrix mx, size_t m, size_t n){
@@ -100,6 +111,8 @@ Matrix mx_SubMx(Matrix mx, size_t mStart, size_t mStop, size_t nStart, size_t nS
   return mxNew;
 }
 
+
+
 int mx_det(Matrix mx){
   // Calculates the determinant of an matrix.
   int sum = 0;
@@ -110,7 +123,9 @@ int mx_det(Matrix mx){
         return mx->data[0];
         break;
       case 2:
-        return mx->data[0]*mx->data[3] - mx->data[1]*mx->data[2];
+
+        sum = mx->data[0]*mx->data[3] - mx->data[1]*mx->data[2];
+
         break;
       default:
         // This leads to cofactor evaluation.
@@ -119,20 +134,26 @@ int mx_det(Matrix mx){
         for (size_t top_row_cout = 0; top_row_cout < mx->n; top_row_cout++) {
           // create a sub matrix for eveary top row cell.
           Matrix mxNew = mx_zerros(mx->m - 1, mx->m -1);
+          size_t mxNewColumn = 0;
+          size_t mxNewRow = 0;
           // fill new matrix with sub matrix excluding the colum pointed ou by top_row_cout
-          size_t newCol = 0;
-          size_t newRow = 0;
-          for (size_t row = 1; row < mx->m; row++) {
-            for (size_t col = 0; col < mx->n; col++) {
-              if (top_row_cout != col) {
-                mx_sett(mxNew,mx_getCell( mx, row , col ), newRow, newCol );
-                newCol++;
+          for (size_t rows = 1; rows < mx->m; rows++) {  // iterate th mx matrix row wise start att row 1 because we do cofactor evaluation over top row.
+            for (size_t cols = 0; cols < mx->n; cols++) { // mx matrix columns.
+              if (cols != top_row_cout) {
+                mx_sett(mxNew, mx_getCell(mx, rows, cols), mxNewRow, mxNewColumn);
+                //printf("added to cell mxNewColumn=%ld mxNewRow=%ld\n",mxNewColumn, mxNewRow );
+                mxNewColumn++;
               }
 
             }
-            newRow++;
+            mxNewColumn = 0;
+            mxNewRow++;
           }
-          mx_show(mxNew);
+          //mx_show(mxNew);
+          int top_nr = pow(-1,top_row_cout)*mx->data[top_row_cout];
+          int sub_sum = mx_det(mxNew);
+          printf("top_nr= %d, sub_sum=%d\n",top_nr, sub_sum );
+          sum += top_nr*sub_sum;
           mx_free(mxNew);
         }
 
@@ -142,6 +163,7 @@ int mx_det(Matrix mx){
   else {
     printf("Not a square matrix\n" );
   }
+  printf("sum = %d\n", sum);
   return sum;
 }
 

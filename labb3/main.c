@@ -2,7 +2,10 @@
 #include <stdio.h>
 
 void test_det(){
-  Matrix mx = mx_Rand(3,3,1,9);
+  size_t n = 3;
+  //Matrix mx = mx_Rand(n,n,1,9);
+  //Matrix mx = mx_Idetity(n);
+  Matrix mx = mx_countUp(n, n);
   mx_show(mx);
   printf("result %d\n", mx_det(mx) );
   mx_free(mx);
