@@ -23,6 +23,8 @@ void mx_sett(Matrix mx, int data, size_t m, size_t n);
 void mx_show(Matrix mx);
 int mx_getCell(Matrix mx, size_t m, size_t n);
 Matrix mx_SubMx(Matrix mx, size_t mStart, size_t mStop, size_t nStart, size_t nStop);
+Matrix _subMx(Matrix mx, size_t col);
 int mx_det(Matrix mx);
+int mxt_det(Matrix mx);
 void mx_free(Matrix mx);
 #endif

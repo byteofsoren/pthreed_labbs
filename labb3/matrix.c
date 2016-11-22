@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
+#include <pthread.h>
 
 Matrix mx_zerros(size_t m, size_t n){
   // Creates a matrix with 0 m rows n cols.
@@ -43,7 +43,7 @@ Matrix mx_countUp(size_t m, size_t n){
   for (size_t i = 0; i < m*n; i++) {
     mx->data[i] = i + 1;
   }
-  mx->data[1]=9;
+  //mx->data[1]=9;
   return mx;
 }
 
@@ -60,6 +60,7 @@ void mx_sett(Matrix mx, int data, size_t m, size_t n){
     mx->data[_index(mx,  m,  n)] = data;
   }
   else {
+    printf("mx_sett(Matrix mx, int data, size_t m, size_t n)\n" );
     printf("--Error out side index--" );
     printf("-- m\tn--\n");
     printf("-in- %ld\t%ld\n", m,n );
@@ -111,7 +112,36 @@ Matrix mx_SubMx(Matrix mx, size_t mStart, size_t mStop, size_t nStart, size_t nS
   return mxNew;
 }
 
+Matrix _subMx(Matrix mx, size_t col){
+  // To evalueate determinants you need to create sub matrixes.
+  // This function returns a submatrix of given matrix.
+  // Inuput:
+  //      Matrix mx  is a retangular matrix of n elements
+  //      size_t col is the column of the matrix you do not want to include.
+  // Return:
+  //      Matrix: The returning rectangular matrix is n-1 in size.
+  // Also it ignores the top row.
+  if (col < mx->n) {
+    // Its inside the scope of the matrix.
+    Matrix subMx = mx_zerros(mx->m - 1, mx->n -1);
+    size_t row_count = 0;
+    size_t col_count = 0;
+    for (size_t mx_m = 0; mx_m < mx->m; mx_m++) {
+      for (size_t mx_n = 0; mx_n < mx->n; mx_n++) {
+        if (col != mx_m) {
+          mx_sett(subMx, mx_getCell(mx, mx_m, mx_n) , row_count, col_count);
+          col_count++;
+        }
+      }
+      row_count++;
+    }
 
+    return subMx;
+  }else {
+    printf("ERROR: Outside domain of input matrix\n" );
+  }
+  return NULL;
+}
 
 int mx_det(Matrix mx){
   // Calculates the determinant of an matrix.
@@ -123,13 +153,11 @@ int mx_det(Matrix mx){
         return mx->data[0];
         break;
       case 2:
-
         sum = mx->data[0]*mx->data[3] - mx->data[1]*mx->data[2];
-
         break;
       default:
         // This leads to cofactor evaluation.
-        printf("test\n" );
+        //printf("test\n" );
         // iterate over top row.
         for (size_t top_row_cout = 0; top_row_cout < mx->n; top_row_cout++) {
           // create a sub matrix for eveary top row cell.
@@ -152,7 +180,7 @@ int mx_det(Matrix mx){
           //mx_show(mxNew);
           int top_nr = pow(-1,top_row_cout)*mx->data[top_row_cout];
           int sub_sum = mx_det(mxNew);
-          printf("top_nr= %d, sub_sum=%d\n",top_nr, sub_sum );
+          //printf("top_nr= %d, sub_sum=%d\n",top_nr, sub_sum );
           sum += top_nr*sub_sum;
           mx_free(mxNew);
         }
@@ -163,9 +191,11 @@ int mx_det(Matrix mx){
   else {
     printf("Not a square matrix\n" );
   }
-  printf("sum = %d\n", sum);
+  //printf("sum = %d\n", sum);
   return sum;
 }
+
+
 
 void mx_free(Matrix mx){
   mx->data = NULL;
